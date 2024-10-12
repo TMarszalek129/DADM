@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-file_path = './data/data/100_MLII.dat'
+file_path = '../data/data/100_MLII.dat'
 ecg = pd.read_csv(file_path, delimiter='\t')
 ecg = ecg.values
 
@@ -33,5 +33,5 @@ f_up_norm = (f_up / f_p) / 2
 
 ecg_low = low_filter(ecg, f_down_norm)
 
-#plt.plot(ecg[1000:5000])
-plt.plot(ecg_low)
+plt.plot(ecg[1000:5000])
+#plt.plot(ecg_low)
