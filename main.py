@@ -20,5 +20,6 @@ ecg_filtered = np.convolve(h_filter, ecg_filtered, 'same')
 plt.figure()
 plt.plot(ecg)
 plt.plot(ecg_filtered)
+plt.show()
 
 print('DONE')

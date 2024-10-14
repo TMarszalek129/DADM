@@ -33,11 +33,13 @@ def low_filter_design(N, f_c, f_p, plot=False):
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Magnitude [dB]')
         plt.xlim(0, N/2 * (1/f_p))
+        plt.show()
         plt.figure()
         plt.plot(freq, phase)
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Phase [radians]')
         plt.xlim(0, N/2 * (1/f_p))
+        plt.show()
     
     return f_val_win
 
