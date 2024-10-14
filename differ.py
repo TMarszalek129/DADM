@@ -9,6 +9,7 @@ def differential(N, x, plot=False):
         plt.figure()
         plt.title("Diff")
         plt.plot(diff)
+        plt.show()
 
     return diff
 
@@ -21,6 +22,7 @@ def power(N, x, plot=False):
         plt.figure()
         plt.title("Power")
         plt.plot(p)
+        plt.show()
 
     return p
 
@@ -34,5 +36,6 @@ def integral(N, x, plot=False):
         plt.figure()
         plt.title("Integral")
         plt.plot(inte)
+        plt.show()
 
     return inte
