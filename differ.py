@@ -29,8 +29,9 @@ def power(N, x, plot=False):
 def integral(N, x, plot=False):
 
     #C = int(0.150 * 360) # 360 to fs a 0.150 nie wiem skąd chat wziął xd
-    C = int(N/360)
-    inte = np.convolve(x, np.ones(C)/C, mode='same')
+    # C = int(N/360)
+    C = 30
+    inte = np.convolve(np.ones(C)/C, x, mode='same')
     
     if(plot):    
         plt.figure()
