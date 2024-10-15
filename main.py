@@ -24,8 +24,8 @@ inte = integral(len(p), p, False)
 
 plt.figure()
 plt.title("EKG")
-# plt.plot(ecg)
-# plt.plot(ecg_filtered)
+plt.plot(ecg)
+plt.plot(ecg_filtered)
 plt.show()
 
 print('DONE')

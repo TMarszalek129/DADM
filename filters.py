@@ -11,7 +11,7 @@ def low_filter_design(N, f_c, f_p, plot=False):
     t_up = np.arange(1, mid+1)
     
     f_l = np.sin(2 * np.pi * f * t_down) / (np.pi * t_down)
-    f_0 = 2 *f
+    f_0 = 2 * f
     f_r = np.sin(2 * np.pi * f * t_up) / (np.pi * t_up)
     
     f_val = np.hstack((f_l, f_0, f_r))
@@ -20,12 +20,7 @@ def low_filter_design(N, f_c, f_p, plot=False):
 
     f_val_win = hamm_win * f_val
     
-    
     if(plot):
-         
-        # freq = np.linspace(0, N*(1/f_p), N)
-
-        # f_val_freq = np.fft.fft(f_val_win)
         w, h = freqz(f_val_win, fs=f_p)
         magnitude = 20 * np.log10(np.abs(h))
         phase = np.unwrap(np.angle(h))
@@ -35,14 +30,12 @@ def low_filter_design(N, f_c, f_p, plot=False):
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Magnitude [dB]')
         plt.title('Magnitude of low-pass filter')
-        # plt.xlim(0, 15)
         plt.show()
         plt.figure()
         plt.plot(w, phase)
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Phase [radians]')
         plt.title('Phase of low-pass filter')
-        # plt.xlim(0, N/2 * (1/f_p))
         plt.show()
     
     return f_val_win
@@ -56,7 +49,7 @@ def high_filter_design(N, f_c, f_p, plot=False):
     t_up = np.arange(1, mid+1)
     
     f_l = -np.sin(2 * np.pi * f * t_down) / (np.pi * t_down)
-    f_0 = 1 - 2 *f
+    f_0 = 1 - 2 * f
     f_r = -np.sin(2 * np.pi * f * t_up) / (np.pi * t_up)
     
     f_val = np.hstack((f_l, f_0, f_r))
@@ -65,10 +58,6 @@ def high_filter_design(N, f_c, f_p, plot=False):
     f_val_win = hamm_win * f_val
     
     if(plot):
-         
-        # freq = np.linspace(0, N*(1/f_p), N)
-
-        # f_val_freq = np.fft.fft(f_val_win)
         w, h = freqz(f_val_win, fs=f_p)
         magnitude = 20 * np.log10(np.abs(h))
         phase = np.unwrap(np.angle(h))
@@ -78,7 +67,6 @@ def high_filter_design(N, f_c, f_p, plot=False):
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Magnitude [dB]')
         plt.title('Magnitude of high-pass filter')
-        # plt.xlim(0, 20)
         plt.show()
         
         plt.figure()
@@ -86,7 +74,6 @@ def high_filter_design(N, f_c, f_p, plot=False):
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Phase [radians]')
         plt.title('Phase of high-pass filter')
-        # plt.xlim(0, N/2 * (1/f_p))
         plt.show()
 
     return f_val_win
