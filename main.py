@@ -9,7 +9,7 @@ from derivative import detect_maxima
 file_path = '../data/data/100_MLII.dat'
 # file_path="C:/Users/bartl/Downloads/data/data/100_MLII.dat"
 ecg = pd.read_csv(file_path, delimiter='\t').values.ravel()
-# ecg = ecg[2000:20000]
+ecg = ecg[2000:20000]
             
 f_down = 5
 f_up = 15
