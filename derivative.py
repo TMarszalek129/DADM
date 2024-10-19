@@ -46,5 +46,5 @@ def detect_maxima(x, t, plot=False):
         plt.grid(True)
         plt.show()
 
-    return maxima_x_r, maxima_y_r
+    return maxima_y, maxima_x
 

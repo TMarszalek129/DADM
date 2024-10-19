@@ -5,7 +5,7 @@ from scipy.signal import freqz
 def low_filter_design(N, f_c, f_p, plot=False):
     
     f = (f_c / f_p) / 2  
-    n = np.arange(0, N)
+
     mid = int(np.floor(N / 2))
     t_down = np.arange(-mid, 0)
     t_up = np.arange(1, mid+1)
@@ -15,7 +15,8 @@ def low_filter_design(N, f_c, f_p, plot=False):
     f_r = np.sin(2 * np.pi * f * t_up) / (np.pi * t_up)
     
     f_val = np.hstack((f_l, f_0, f_r))
-    
+
+    n = np.arange(0, len(f_val))
     hamm_win = 0.54 - 0.46 * np.cos(2 * np.pi * n / N - 1).ravel()
 
     f_val_win = hamm_win * f_val
@@ -43,7 +44,7 @@ def low_filter_design(N, f_c, f_p, plot=False):
 def high_filter_design(N, f_c, f_p, plot=False):
     
     f = (f_c / f_p) / 2 
-    n = np.arange(0, N)
+
     mid = int(np.floor(N / 2))
     t_down = np.arange(-mid, 0)
     t_up = np.arange(1, mid+1)
@@ -53,6 +54,8 @@ def high_filter_design(N, f_c, f_p, plot=False):
     f_r = -np.sin(2 * np.pi * f * t_up) / (np.pi * t_up)
     
     f_val = np.hstack((f_l, f_0, f_r))
+
+    n = np.arange(0, len(f_val))
     hamm_win = 0.54 - 0.46 * np.cos(2 * np.pi * n / N - 1).ravel()
 
     f_val_win = hamm_win * f_val
