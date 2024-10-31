@@ -1,37 +1,40 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
+from scipy.interpolate import interp1d
 
-file_path = './data/data/100_MLII.dat'
-ecg = pd.read_csv(file_path, delimiter='\t')
-ecg = ecg.values
+samples = 128
+f_0 = 0.1
 
-def low_filter(data, f):
-    
-    mid = int(np.floor(len(data) / 2))
-    
-    f_value_l = [(np.sin(2 * np.pi * f * M)) / (np.pi * M) for M in range(-mid, 0)]
-    print(len(f_value_l))
-    f_value_0 = 2 *f
-    f_value_r = [(np.sin(2 * np.pi * f * M)) / (np.pi * M) for M in range(1, mid+1)]
-    print(len(f_value_r))
-    f_value = [f_value_l, f_value_r]
-    
-    
-    return f_value
-        
-    
+t = np.concatenate(([0], np.cumsum(np.random.rand(samples-1))))
+y = np.sin(2 * np.pi * f_0 * t)
 
-f_down = 5
-f_up = 15
-f_p = 360
-f_down_norm = (f_down / f_p) / 2  
-f_up_norm = (f_up / f_p) / 2
+interp = interp1d(t, y, kind='linear')
+t_new = np.linspace(0, t[-1], samples)
+y_new = interp(t_new)
+
+f = np.linspace(0, 1/(t_new[1] - t_new[0]), samples)
+p = [1/samples * ( (np.sum(y_new * np.cos(2 * np.pi * f[i] * t_new)))**2 + ((np.sum(y_new * np.sin(2 * np.pi * f[i] * t_new)))**2) )  for i in range(samples)]
+
+t_new_ls = t_new[1:]
+y_ls = y[1:]
+tau = [1 / (4 * np.pi * f[i]) * np.atan(np.sum(np.sin(4 * np.pi * f[i] * t_new_ls)) / np.sum(np.cos(4 * np.pi * f[i] * t_new_ls))) for i in range(1, samples)]
+cos_part = np.array([np.sum(y_ls * np.cos(2 * np.pi * f[i] * (t_new_ls - tau)))**2 / np.sum(np.cos(2 * np.pi * f[i] * (t_new_ls - tau))**2) for i in range(1, samples)])
+sin_part = np.array([np.sum(y_ls * np.sin(2 * np.pi * f[i] * (t_new_ls - tau)))**2 / np.sum(np.sin(2 * np.pi * f[i] * (t_new_ls - tau))**2) for i in range(1, samples)])
+p_ls = 1/2 * (cos_part + sin_part)
 
 
-#N = 2 M + 1
+plt.figure()
+plt.plot(t, y)
+plt.plot(t_new, y_new)
+plt.title("Signal")
+plt.show()
 
-ecg_low = low_filter(ecg, f_down_norm)
+plt.figure()
+plt.plot(f, p)
+plt.title("Periodogram")
+plt.show()
 
-#plt.plot(ecg[1000:5000])
-plt.plot(ecg_low)
+plt.figure()
+plt.plot(f[1:], p_ls)
+plt.title("Periodogram Lomb-Scargle")
+plt.show()
