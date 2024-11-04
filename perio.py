@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
-from scipy.integrate import simps
+from scipy.integrate import simpson
 
 def interpol(t,y,samples):
     interp = interp1d(t, y, kind='linear')
@@ -12,7 +12,7 @@ def interpol(t,y,samples):
 
 def per(t_new, y_new, f, samples):
     p = [1/samples * ( (np.sum(y_new * np.cos(2 * np.pi * f[i] * t_new)))**2 + ((np.sum(y_new * np.sin(2 * np.pi * f[i] * t_new)))**2) )  for i in range(samples)]
-    return p
+    return np.array(p)
 
 def per_ls(t_new_ls, y_ls, f, samples):
     tau = [1 / (4 * np.pi * f[i]) * np.arctan(np.sum(np.sin(4 * np.pi * f[i] * t_new_ls)) / np.sum(np.cos(4 * np.pi * f[i] * t_new_ls))) for i in range(1, samples)]
@@ -24,5 +24,6 @@ def per_ls(t_new_ls, y_ls, f, samples):
 
 def bandpower(frequencies, power_spectrum, freq_range):
     idx_band = np.logical_and(frequencies >= freq_range[0], frequencies <= freq_range[1])
-    band_power = simps(power_spectrum[idx_band], frequencies[idx_band])
+    # print(type(idx_band))
+    band_power = simpson(power_spectrum[idx_band], x=frequencies[idx_band])
     return band_power
