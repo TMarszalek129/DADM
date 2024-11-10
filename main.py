@@ -2,36 +2,46 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-file_path = './data/data/100_MLII.dat'
-ecg = pd.read_csv(file_path, delimiter='\t')
-ecg = ecg.values
+file_path = "../../chf206.dat"
+hrv = pd.read_csv(file_path, delimiter='\t').values.ravel()
+hrv = hrv
 
-def low_filter(data, f):
-    
-    mid = int(np.floor(len(data) / 2))
-    
-    f_value_l = [(np.sin(2 * np.pi * f * M)) / (np.pi * M) for M in range(-mid, 0)]
-    print(len(f_value_l))
-    f_value_0 = 2 *f
-    f_value_r = [(np.sin(2 * np.pi * f * M)) / (np.pi * M) for M in range(1, mid+1)]
-    print(len(f_value_r))
-    f_value = [f_value_l, f_value_r]
-    
-    
-    return f_value
-        
-    
+hrv_mean_out = hrv - np.mean(hrv)
+time = np.cumsum(hrv)
 
-f_down = 5
-f_up = 15
-f_p = 360
-f_down_norm = (f_down / f_p) / 2  
-f_up_norm = (f_up / f_p) / 2
+hrv_intervals = []
+time_intervals = []
+interval = []
+LEN = 4
+counter = 0
 
+for i in range(0, len(hrv_mean_out), 4):
+    hrv_intervals.append(hrv_mean_out[i:i+4])
+    time_intervals.append(time[i:i+4])
 
-#N = 2 M + 1
+if(len(hrv_intervals[-1]) != 4):
+    hrv_intervals.pop(len(hrv_intervals) - 1)
+    time_intervals.pop(len(time_intervals) - 1)
 
-ecg_low = low_filter(ecg, f_down_norm)
+hrv_intervals = np.array(hrv_intervals)
+time_intervals = np.array(time_intervals)
+betas = []
+results = []
+for i in range(len(hrv_intervals)):
+    y = np.array(hrv_intervals[i]).T
+    X = np.array([np.ones(len(time_intervals[i])), time_intervals[i]]).T
+    out = np.linalg.inv(X.T @ X) @ X.T @ y
+    yn = X @ np.array(out)
+    results.append(yn)
+    betas.append(out)
 
-#plt.plot(ecg[1000:5000])
-plt.plot(ecg_low)
+plt.figure()
+plt.plot(time, hrv_mean_out)
+plt.show()
+
+plt.figure()
+plt.plot(time_intervals[1], hrv_intervals[1], "r*")
+plt.plot(results[1])
+plt.xlim([0, 10])
+plt.ylim([-0.1, 0.1])
+plt.show()
