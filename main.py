@@ -41,7 +41,7 @@ plt.show()
 
 plt.figure()
 plt.plot(time_intervals[1], hrv_intervals[1], "r*")
-plt.plot(results[1])
+plt.plot(time_intervals[1], results[1])
 plt.xlim([0, 10])
 plt.ylim([-0.1, 0.1])
 plt.show()
