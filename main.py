@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from function_hrv import interval_hrv
+from function_hrv import interval_hrv, log_interval_hrv
 from fluctuation import fluct_mean
 
 file_path = "../../chf206.dat"
@@ -47,6 +47,10 @@ for j in range(LEN_B,LEN_E):
 # results = np.array(results)
 
 F = fluct_mean(hrv_intervals, results)
+
+log_n = np.log10(range(LEN_B,LEN_E))
+log_Fn = np.log10(F)
+log_results = log_interval_hrv(log_n, log_Fn)
 
 plt.figure()
 plt.plot(time, hrv)
