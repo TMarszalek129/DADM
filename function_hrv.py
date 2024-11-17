@@ -19,15 +19,9 @@ def interval_hrv (hrv_intervals, time_intervals ):
 
 def log_interval_hrv(log_n, log_Fn):
 
-    betas = []
-    results = []
-    for i in range(len(log_Fn)):
-        y = np.array(log_Fn).T
-        X = np.array([np.ones(len(log_n[i])), log_n[i]]).T
-        out = np.linalg.inv(X.T @ X) @ X.T @ y
-        yn = X @ np.array(out)
-        results.append(yn)
-        betas.append(out)
-    results = np.array(results)
+    y = np.array(log_Fn).T
+    X = np.array([np.ones(len(log_n)), log_n]).T
+    out = np.linalg.inv(X.T @ X) @ X.T @ y
+    yn = X @ np.array(out)
 
-    return results
+    return yn
