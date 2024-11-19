@@ -7,7 +7,7 @@ from fluctuation import fluct_mean
 file_path = "../../chf206.dat"
 # file_path = "C:/Users/bartl/Downloads/chf206.dat"
 hrv = pd.read_csv(file_path, delimiter='\t').values.ravel()
-hrv = hrv
+hrv = hrv[np.where(hrv < 2)]
 mean_hrv = np.mean(hrv)
 hrv_mean_out = np.cumsum(hrv - mean_hrv)
 time = np.cumsum(hrv)
@@ -50,13 +50,15 @@ F = fluct_mean(hrv_intervals, results)
 
 log_n = np.log10(range(LEN_B,LEN_E))
 log_Fn = np.log10(F)
-log_results = log_interval_hrv(log_n, log_Fn)
+log_results_low = log_interval_hrv(log_n[0:13], log_Fn[0:13])
+log_results_high = log_interval_hrv(log_n[12:], log_Fn[12:])
 
 plt.figure()
 plt.plot(time, hrv)
 plt.grid()
 plt.xlabel('Time[s]')
 plt.ylabel('HRV [s]')
+plt.title('HRV')
 plt.show()
 
 plt.figure()
@@ -69,13 +71,23 @@ plt.title('Integrated HRV')
 plt.show()
 
 plt.figure()
-plt.plot(time_intervals[0], hrv_intervals[0], "r*")
-for i in range(len(time_intervals[0])):
-    plt.plot(time_intervals[0][i], results[0][i])
-plt.xlim([0, 10])
-plt.ylim([-0.5, 0.5])
+plt.plot(time_intervals[-1], hrv_intervals[-1], "r*")
+for i in range(len(time_intervals[-1])):
+    plt.plot(time_intervals[-1][i], results[-1][i])
+plt.xlim([0, 20])
+plt.ylim([-0.5, 1.5])
 plt.grid()
 plt.xlabel('$x_{t}$[s]')
 plt.ylabel('y[s]')
 plt.title('n=' + str(LEN_B))
+plt.show()
+
+plt.figure()
+plt.plot(log_n, log_Fn, "r*")
+plt.plot(log_n[0:13], log_results_low, 'b-')
+plt.plot(log_n[12:], log_results_high, 'g-')
+plt.grid()
+plt.xlabel('log n')
+plt.ylabel('log Fn')
+plt.title('Fitted lines')
 plt.show()
