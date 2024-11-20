@@ -21,24 +21,27 @@ y_ls = y[1:]
 p_ls = per_ls(t_new_ls, y_ls, f, samples)
 
 plt.figure()
-plt.plot(t, y)
-plt.plot(t_new, y_new)
+plt.plot(t, y, label='signal')
+plt.plot(t_new, y_new, label='interp')
 plt.title("Signal")
+plt.legend()
+plt.grid()
 plt.show()
 
 plt.figure()
 plt.plot(f, p)
 plt.title("Periodogram")
+plt.grid()
 plt.show()
 
 plt.figure()
 plt.plot(f[1:], p_ls)
 plt.title("Periodogram Lomb-Scargle")
+plt.grid()
 plt.show()
 
 
 # REAL
-
 file_path = "../../chf206.dat"
 # file_path="C:/Users/bartl/Downloads/chf206.dat"
 hrv = pd.read_csv(file_path, delimiter='\t').values.ravel()
@@ -60,22 +63,26 @@ y_ls_r = y_r[2:]
 p_ls_r = per_ls(t_new_ls_r, y_ls_r, f_r, sampl)
 
 plt.figure()
-plt.plot(t_r, y_r)
-plt.plot(t_new_r, y_new_r)
+plt.plot(t_r, y_r, label='signal')
+plt.plot(t_new_r, y_new_r, label='interp')
 plt.title("Signal HRV")
-plt.ylim([0.3, 0.8])
+# plt.ylim([0.3, 0.8])
+plt.legend()
+plt.grid()
 plt.show()
 
 plt.figure()
 plt.plot(f_r, p_r)
 plt.title("Periodogram HRV")
-plt.ylim([0.0, 0.001])
+# plt.ylim([0.0, 0.001])
+plt.grid()
 plt.show()
 
 plt.figure()
 plt.plot(f_r[1:], p_ls_r)
 plt.title("Periodogram Lomb-Scargle HRV")
-plt.ylim([0.0, 0.001])
+# plt.ylim([0.0, 0.001])
+plt.grid()
 plt.show()
 
 hf_range = (0.15, 0.4)
