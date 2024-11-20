@@ -79,7 +79,7 @@ plt.ylim([-0.5, 1.5])
 plt.grid()
 plt.xlabel('$x_{t}$[s]')
 plt.ylabel('y[s]')
-plt.title('n=' + str(LEN_B))
+plt.title('n=' + str(LEN_E-1))
 plt.show()
 
 plt.figure()
