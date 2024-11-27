@@ -30,5 +30,9 @@ f_p = 100
 t = np.arange(0, len(data_eng) / f_p, 1 / f_p)
 
 max, min = detect_extrema(data_eng.ravel(), t, True)
-ransac_eng(max[:-1], min[1:], t, data_eng, True)
-#ols_eng(max[:-1], min[1:], t, data_eng, False)
+v_ransac = ransac_eng(max[:-1], min[1:], t, data_eng, True)
+v_ols = ols_eng(max[:-1], min[1:], t, data_eng, True)
+
+
+print(f"Średnia prękość fazy wolnej [RANSAC]: {np.mean(v_ransac):.2f}, Odchylenie standardowe fazy wolnej [RANSAC]: {np.std(v_ransac):.2f}")
+print(f"Średnia prękość fazy wolnej [OLS]: {np.mean(v_ols):.2f}, Odchylenie standardowe fazy wolnej [OLS]: {np.std(v_ols):.2f}")

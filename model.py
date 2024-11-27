@@ -77,7 +77,7 @@ def ransac_eng(max, min, x, y, wave):
         yn = X_eng @ betas_eng
 
         results.append(yn)
-        beta.append(betas_eng)
+        beta.append(betas_eng[0][0])
 
         thr = 0.2
         y_min = yn - thr * np.mean(yn)
@@ -100,22 +100,31 @@ def ransac_eng(max, min, x, y, wave):
         plt.title('Dopasowanie prostej metodą RANSAC')
         plt.grid()
         plt.show()
+    return beta
 
-def ols_eng(x, y, wave):
+def ols_eng(max, min, x, y, wave):
+    results = []
+    betas = []
+    indi = []
 
-    X = np.vstack((x, np.ones(len(x)))).T
-    beta, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
-    slope, intercept = beta
+    for j in range(len(max)):
+        X = np.vstack((x[max[j]:min[j]], np.ones(len(x[max[j]:min[j]])))).T
+        beta, _, _, _ = np.linalg.lstsq(X, y[max[j]:min[j]], rcond=None)
+        slope, intercept = beta
+        indi.append(x[max[j]:min[j]])
+        results.append(slope * x[max[j]:min[j]] + intercept)
+        betas.append(slope[0])
 
     if wave:
-        plt.scatter(x, y, label='Dane')
-        plt.plot(x, slope * x + intercept, color='red', label='Dopasowana prosta')
+        plt.plot(x, y, 'r')
+        for i in range(len(results)):
+            plt.plot(indi[i], results[i], 'k-')
         plt.xlabel('x')
         plt.ylabel('y')
         plt.title('Dopasowanie prostej metodą OLS')
-        plt.legend()
         plt.grid()
         plt.show()
+    return betas
 
 def detect_extrema(signal, time, plot_flag):
     # Wykrywanie maksimów
