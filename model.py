@@ -3,26 +3,38 @@ import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 
 
-def ransac(x_values, y_values, x, y, data, wave):
+def ransac(x, y, wave):
 
-    X = np.array([np.ones(len(x_values)), x_values]).T
-    Y = y_values.T
+    while(True):
+        indices = np.arange(len(x))
+        samples = np.random.choice(indices, 2)
+        x_values = x[samples]
+        y_values = y[samples]
 
-    betas = np.linalg.inv(X.T @ X) @ X.T @ Y
-    yn = np.array([np.ones(len(x)), x]).T @ betas
+        X = np.array([np.ones(len(x_values)), x_values]).T
+        Y = y_values.T
 
-    thr = 0.2
-    y_min = yn - thr * np.mean(yn)
-    y_max = yn + thr * np.mean(yn)
+        betas = np.linalg.inv(X.T @ X) @ X.T @ Y
+        yn = np.array([np.ones(len(x)), x]).T @ betas
 
-    good_indices = []
-    for i in range(len(y)):
-        min_val = y_min[i]
-        max_val = y_max[i]
-        if y[i] > min_val and y[i] < max_val:
-            good_indices.append(i)
+        thr = 0.2
+        y_min = yn - thr * np.mean(yn)
+        y_max = yn + thr * np.mean(yn)
 
-    print('Good indices is ', len(good_indices) / len(y) * 100, '%')
+        good_indices = []
+        for i in range(len(y)):
+            min_val = y_min[i]
+            max_val = y_max[i]
+            if y[i] > min_val and y[i] < max_val:
+                good_indices.append(i)
+
+        good_percent = len(good_indices) / len(y) * 100
+
+
+        if(good_percent > 70):
+            print('Good indices is ', good_percent, '%')
+            break
+        print('Good indices is ', good_percent, '% - level is too low')
 
     X = np.array([np.ones(len(good_indices)),x[good_indices]]).T
     Y = np.array(y[good_indices]).T
@@ -32,116 +44,159 @@ def ransac(x_values, y_values, x, y, data, wave):
 
     if wave:
         plt.figure()
-        plt.plot(data[0, :],data[1, :], 'r*', label='Dane')
+        plt.plot(x, y, 'r*', label='Data')
         plt.plot(x_values, y_values, 'ko')
-        plt.plot(x, yn, 'g-', label='Dopasowana prosta dla 2 punktów')
-        plt.plot(x, y_min, 'b-', label='Zakresy')
+        plt.plot(x, yn, 'g-', label='Fitted line for 2 points')
+        plt.plot(x, y_min, 'b-', label='Ranges')
         plt.plot(x, y_max, 'b-')
-        plt.plot(x[good_indices], yn_good, 'k-', label='Dopasowana prosta dla wszystkich danych')
+        plt.plot(x[good_indices], yn_good, 'k-', label='Fitted line for all points')
         plt.xlabel('x')
         plt.ylabel('y')
-        plt.title('Dopasowanie prostej metodą RANSAC')
+        plt.title('Fitted line using the RANSAC method')
         plt.legend()
         plt.grid()
         plt.show()
 
-def ols(x, y, wave):
-
-    X = np.vstack((x, np.ones(len(x)))).T
-    beta, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
-    slope, intercept = beta
-
-    if wave:
-        plt.scatter(x, y, label='Dane')
-        plt.plot(x, slope * x + intercept, color='red', label='Dopasowana prosta')
-        plt.xlabel('x')
-        plt.ylabel('y')
-        plt.title('Dopasowanie prostej metodą OLS')
-        plt.legend()
-        plt.grid()
-        plt.show()
-
+    return x[good_indices], yn_good
 
 def ransac_eng(max, min, x, y, wave):
-    results = []
-    beta = []
-    l_max = []
-    l_min = []
-    indi = []
+    yn_eng = []
+    betas_eng = []
+    y_max_eng = []
+    y_min_eng = []
+    indices = []
+    good_indices_eng = []
+
 
     for j in range(len(max)):
-        X_eng = np.array([np.ones(len(x[max[j]:min[j]])), x[max[j]:min[j]]]).T
-        Y_eng = y[max[j]:min[j]]
+        print(j, ' phase, min value: ', min[j], ', max value: ', max[j])
+        counter = 0
+        while(True):
+            x_j = x[max[j]:min[j]]
+            y_j = y[max[j]:min[j]]
 
-        betas_eng = np.linalg.inv(X_eng.T @ X_eng) @ X_eng.T @ Y_eng
-        yn = X_eng @ betas_eng
+            indices_j = np.arange(max[j], min[j]) - max[j]
+            samples = np.random.choice(indices_j, 2)
+            x_values = x_j[samples]
+            y_values = y_j[samples]
 
-        results.append(yn)
-        beta.append(betas_eng[0][0])
+            X_j = np.array([np.ones(len(x_values)), x_values]).T
+            Y_j = y_values
 
-        thr = 0.2
-        y_min = yn - thr * np.mean(yn)
-        y_max = yn + thr * np.mean(yn)
 
-        l_max.append(y_max)
-        l_min.append(y_min)
+            betas_j = np.linalg.inv(X_j.T @ X_j) @ X_j.T @ Y_j
+            yn = np.array([np.ones(len(x_j)), x_j]).T @ betas_j
+            thr = 0.5
+            mean = np.mean(yn)
+            if(mean > 0):
+                y_min = yn - thr * np.mean(yn)
+                y_max = yn + thr * np.mean(yn)
+            else:
+                y_min = yn + thr * np.mean(yn)
+                y_max = yn - thr * np.mean(yn)
 
-        indi.append(x[max[j]:min[j]])
+            good_indices = []
+            for i in range(len(y_j)):
+                min_val = y_min[i]
+                max_val = y_max[i]
+                if y_j[i] > min_val and y_j[i] < max_val:
+                    good_indices.append(i)
+
+            good_percent = len(good_indices) / len(y_j) * 100
+            thr = 70 - (counter // 2)
+            print('Threshold level: ', thr, ' %')
+            if (good_percent >= thr):
+                print('Good indices is ', good_percent, '%')
+                break
+            print('Good indices is ', good_percent, '% - level is too low')
+            counter = counter + 1
+        X = np.array([np.ones(len(good_indices)), x_j[good_indices]]).T
+        Y = np.array(y_j[good_indices])
+
+        betas = np.linalg.inv(X.T @ X) @ X.T @ Y
+        yn_good = X @ betas
+
+        yn_eng.append(yn_good)
+        betas_eng.append(betas_j)
+        y_max_eng.append(y_max)
+        y_min_eng.append(y_min)
+        indices.append(np.arange(max[j], min[j]))
+        good_indices_eng.append(good_indices + max[j])
+
 
     if wave:
         plt.figure()
-        plt.plot(x, y, 'r')
-        for i in range(len(results)):
-            plt.plot(indi[i], l_min[i], 'b-')
-            plt.plot(indi[i], l_max[i], 'b-')
-            plt.plot(indi[i], results[i], 'k-')
+        plt.plot(x, y, 'r-')
+        for i in range(len(yn_eng)):
+            plt.plot(x[good_indices_eng[i]], yn_eng[i], 'k-', label='Fitted line')
         plt.xlabel('x')
         plt.ylabel('y')
-        plt.title('Dopasowanie prostej metodą RANSAC')
+        plt.title('Fitted line using RANSAC method')
+        plt.grid()
+        # plt.xlim([3, 8])
+        plt.show()
+    return betas, good_indices_eng, yn_eng
+
+def ols(x, y, wave):
+
+    X = np.array([np.ones(len(x)), x]).T
+    Y = y.T
+
+    betas = np.linalg.inv(X.T @ X) @ X.T @ y
+    yn = X @ betas
+
+    if wave:
+        plt.plot(x, y, 'r*', label='Data')
+        plt.plot(x, yn, 'b-', label='Fitted line')
+        plt.xlabel('x')
+        plt.ylabel('y')
+        plt.title('Fitted line using the OLS method')
+        plt.legend()
         plt.grid()
         plt.show()
-    return beta
+
+    return x, yn
 
 def ols_eng(max, min, x, y, wave):
-    results = []
-    betas = []
-    indi = []
+    results_arr = []
+    betas_arr = []
+    indi_arr = []
 
     for j in range(len(max)):
-        X = np.vstack((x[max[j]:min[j]], np.ones(len(x[max[j]:min[j]])))).T
-        beta, _, _, _ = np.linalg.lstsq(X, y[max[j]:min[j]], rcond=None)
-        slope, intercept = beta
-        indi.append(x[max[j]:min[j]])
-        results.append(slope * x[max[j]:min[j]] + intercept)
-        betas.append(slope[0])
+
+        X = np.array([np.ones(len(x[max[j]:min[j]])), x[max[j]:min[j]]]).T
+        Y = np.array(y[max[j]:min[j]])
+
+        betas = np.linalg.inv(X.T @ X) @ X.T @ Y
+        yn = X @ betas
+        indi_arr.append(np.arange(max[j], min[j]))
+        results_arr.append(yn)
+        betas_arr.append(betas)
 
     if wave:
         plt.plot(x, y, 'r')
-        for i in range(len(results)):
-            plt.plot(indi[i], results[i], 'k-')
+        for i in range(len(results_arr)):
+            plt.plot(x[indi_arr[i]], results_arr[i], 'k-')
         plt.xlabel('x')
         plt.ylabel('y')
-        plt.title('Dopasowanie prostej metodą OLS')
+        plt.title('Fitted line using OLS method')
         plt.grid()
         plt.show()
-    return betas
+    return betas, indi_arr, results_arr
 
 def detect_extrema(signal, time, plot_flag):
-    # Wykrywanie maksimów
+
     maxima, _ = find_peaks(signal, height=5, distance=80)
-    
-    # Wykrywanie minimów (przez odwrócenie sygnału)
     minima, _ = find_peaks(-signal, height=5, distance=95)
-    
-    # Jeśli plot_flag jest True, wyświetl wykres
+
     if plot_flag:
         plt.figure(figsize=(10, 6))
-        plt.plot(time, signal, label='Sygnał', color='blue')  # Rysowanie sygnału
-        plt.scatter(time[maxima], signal[maxima], color='red', label='Maksima', zorder=5)  # Rysowanie maksimów
-        plt.scatter(time[minima], signal[minima], color='green', label='Minima', zorder=5)  # Rysowanie minimów
-        plt.title('Wykrywanie maksimów i minimów sygnału')
-        plt.xlabel('Czas')
-        plt.ylabel('Wartość sygnału')
+        plt.plot(time, signal, label='Signal', color='blue')
+        plt.scatter(time[maxima], signal[maxima], color='red', label='Maximums', zorder=5)
+        plt.scatter(time[minima], signal[minima], color='green', label='Minimums', zorder=5)
+        plt.title('Detected maximums and minimums')
+        plt.xlabel('Time [s]')
+        plt.ylabel('Voltage [mV]')
         plt.legend()
         plt.grid(True)
         plt.show()
