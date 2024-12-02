@@ -61,7 +61,7 @@ def ransac(x, y, wave):
 
 def ransac_eng(max, min, x, y, wave):
     yn_eng = []
-    betas_eng = []
+    slopes_eng = []
     y_max_eng = []
     y_min_eng = []
     indices = []
@@ -117,7 +117,7 @@ def ransac_eng(max, min, x, y, wave):
         yn_good = X @ betas
 
         yn_eng.append(yn_good)
-        betas_eng.append(betas_j)
+        slopes_eng.append(betas_j[1])
         y_max_eng.append(y_max)
         y_min_eng.append(y_min)
         indices.append(np.arange(max[j], min[j]))
@@ -135,7 +135,7 @@ def ransac_eng(max, min, x, y, wave):
         plt.grid()
         # plt.xlim([3, 8])
         plt.show()
-    return betas, good_indices_eng, yn_eng
+    return slopes_eng, good_indices_eng, yn_eng
 
 def ols(x, y, wave):
 
@@ -159,7 +159,7 @@ def ols(x, y, wave):
 
 def ols_eng(max, min, x, y, wave):
     results_arr = []
-    betas_arr = []
+    slopes_arr = []
     indi_arr = []
 
     for j in range(len(max)):
@@ -171,7 +171,7 @@ def ols_eng(max, min, x, y, wave):
         yn = X @ betas
         indi_arr.append(np.arange(max[j], min[j]))
         results_arr.append(yn)
-        betas_arr.append(betas)
+        slopes_arr.append(betas[1])
 
     if wave:
         plt.plot(x, y, 'r')
@@ -182,7 +182,7 @@ def ols_eng(max, min, x, y, wave):
         plt.title('Fitted line using OLS method')
         plt.grid()
         plt.show()
-    return betas, indi_arr, results_arr
+    return slopes_arr, indi_arr, results_arr
 
 def detect_extrema(signal, time, plot_flag):
 

@@ -43,8 +43,8 @@ if 'real' in OPERATIONS:
     max, min = detect_extrema(data_eng.ravel(), t, False)
     max, min = max[:-1], min[1:]
     # v_ransac = ransac_eng(max[:-1], min[1:], t, data_eng, True)
-    betas_rans, good_ind_rans, y_rans = ransac_eng(max, min, t, data_eng, False)
-    betas_ols, good_ins_ols, y_ols = ols_eng(max, min, t, data_eng, False)
+    slopes_rans, good_ind_rans, y_rans = ransac_eng(max, min, t, data_eng, False)
+    slopes_ols, good_ins_ols, y_ols = ols_eng(max, min, t, data_eng, False)
 
     plt.figure()
     plt.plot(t, data_eng, 'r-')
@@ -62,13 +62,13 @@ if 'real' in OPERATIONS:
     # print(f"Średnia prękość fazy wolnej [RANSAC]: {np.mean(v_ransac):.2f}, Odchylenie standardowe fazy wolnej [RANSAC]: {np.std(v_ransac):.2f}")
     # print(f"Średnia prękość fazy wolnej [OLS]: {np.mean(v_ols):.2f}, Odchylenie standardowe fazy wolnej [OLS]: {np.std(v_ols):.2f}")
 
-    arr_grad_rans, arr_grad_ols = [], []
-    for i in range(len(y_rans)):
-        rans_grad = y_rans[i][-1] - y_rans[i][-1] / t[good_ind_rans[i][-1]] - t[good_ind_rans[i][0]]
-        ols_grad = y_ols[i][-1] - y_ols[i][-1] / t[good_ins_ols[i][-1]] - t[good_ins_ols[i][0]]
+    # arr_grad_rans, arr_grad_ols = [], []
+    # for i in range(len(y_rans)):
+    #     rans_grad = y_rans[i][-1] - y_rans[i][-1] / t[good_ind_rans[i][-1]] - t[good_ind_rans[i][0]]
+    #     ols_grad = y_ols[i][-1] - y_ols[i][-1] / t[good_ins_ols[i][-1]] - t[good_ins_ols[i][0]]
+    #
+    #     arr_grad_rans.append(rans_grad)
+    #     arr_grad_ols.append(ols_grad)
 
-        arr_grad_rans.append(rans_grad)
-        arr_grad_ols.append(ols_grad)
-
-    v_mean_rans, v_mean_ols = np.mean(arr_grad_rans), np.mean(arr_grad_ols)
-    v_std_rans, v_std_ols = np.std(arr_grad_rans), np.std(arr_grad_ols)
+    v_mean_rans, v_mean_ols = np.mean(slopes_rans), np.mean(slopes_ols)
+    v_std_rans, v_std_ols = np.std(slopes_rans), np.std(slopes_ols)
