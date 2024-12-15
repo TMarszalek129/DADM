@@ -14,11 +14,13 @@ data4 = abr4.abr_signal4;
 
 fp = 100000;
 DATA_NUM = data2; % data2 or data3 or data4
+
 %% Process loop:
 
 for i = 1:length(DATA_NUM)
     db = DATA_NUM{i}.dB;
     signal = DATA_NUM{i}.data;
+    TIME_I5 = 100*DATA_NUM{i}.l5;
 
     ones_arr = transpose(signal(length(signal)-1)*ones(1,24));
     signal = [signal; ones_arr];
@@ -36,6 +38,8 @@ for i = 1:length(DATA_NUM)
         hold on
         plot(t_max, swa(t_max), 'r*')
         plot(t_min, swa(t_min), 'b*')
+        y_limits = ylim; % Pobierz zakres osi Y
+        plot([TIME_I5 TIME_I5], y_limits, 'r--', 'LineWidth', 2);
         title(['SWA ', num2str(db), ' Hz'])
     end
 end
