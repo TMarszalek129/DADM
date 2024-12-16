@@ -13,7 +13,8 @@ data3 = abr3.abr_signal3;
 data4 = abr4.abr_signal4;
 
 fp = 100000;
-DATA_NUM = data2; % data2 or data3 or data4
+sto_arr = [];
+DATA_NUM = data4; % data2 or data3 or data4
 
 %% Process loop:
 
@@ -25,20 +26,21 @@ for i = 1:length(DATA_NUM)
     ones_arr = transpose(signal(length(signal)-1)*ones(1,24));
     signal = [signal; ones_arr];
 
-    t = 0:1/fp:(length(signal)-1)*(1/fp);
-    t = t * 1000;
+    t = 0:(1/fp):(length(signal)-1)*(1/fp);
+    t = t * fp;
 
     [swa, sto, t_max, t_min] = detectV(signal, db);
-    
+    sto_arr(i) = sto;
+
     if(sto)
         sprintf("V_pp/V_mean for %f Hz = %f", db, sto)
     
         figure
-        plot(swa)
+        plot(t, swa)
         hold on
         plot(t_max, swa(t_max), 'r*')
         plot(t_min, swa(t_min), 'b*')
-        y_limits = ylim; % Pobierz zakres osi Y
+        y_limits = ylim; 
         plot([TIME_I5 TIME_I5], y_limits, 'r--', 'LineWidth', 2);
         title(['SWA ', num2str(db), ' Hz'])
     end
