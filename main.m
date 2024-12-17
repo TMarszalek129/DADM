@@ -14,7 +14,7 @@ data4 = abr4.abr_signal4;
 
 fp = 100000;
 sto_arr = [];
-DATA_NUM = data4; % data2 or data3 or data4
+DATA_NUM = data2; % data2 or data3 or data4
 
 %% Process loop:
 

@@ -5,7 +5,6 @@ function [swa, sto, t_max, t_min] = detectV(signal, db)
 persistent min_range
 persistent max_range
 
-
 [swa,swd] = swt(signal,6,'bior5.5');
 
 swa = swa(6, :);
@@ -16,7 +15,6 @@ t_max = 0;
 fig_proc = figure;
 plot(swa)
 title('SWA after preprocessing')
-
 
 [max, idx_max] = findpeaks(swa)
 localmins = islocalmin(swa, 'FlatSelection','first');
@@ -31,17 +29,16 @@ else
     max_range = max_range + (120 - db)/2;
 end
 
-if ( min_range >= 800)
-        warning("%f sound is inaudible", db)
-        close(fig_proc)
-        return;
+if (min_range >= 800)
+    warning("%f Hz sound is inaudible", db)
+    close(fig_proc)
+    return;
 end
 
-
 idx_V = find(idx_max > min_range & idx_max < max_range);
-sprintf("Start min value: %f", min_range)
+%sprintf("Start min value: %f", min_range)
 while isempty(idx_V)
-    if ( min_range >= 800)
+    if (min_range >= 800)
         warning("%f sound is inaudible", db)
         close(fig_proc)
         return;
@@ -57,8 +54,6 @@ while isempty(idx_V)
 
 end
 
-
-
 V_max = max(idx_V(1));
 t_max = idx_max(idx_V(1));
 
@@ -68,19 +63,11 @@ try
     V_min = min(idx_V_min);
     t_min = idx_min(idx_V_min);
    
-
     V_pp = V_max - V_min;
     V_mean = abs(mean(swa));
     
-
     sto = V_pp / V_mean;
-    
-    % if(sto < 1)
-    %     warning("%f sound is inaudible", db)
-    %     close(fig_proc)
-    %     return;
-    % end
-
+  
 catch
     warning("%f sound is inaudible", db)
 end
