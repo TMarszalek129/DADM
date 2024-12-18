@@ -29,12 +29,6 @@ else
     max_range = max_range + (120 - db)/2;
 end
 
-if (min_range >= 800)
-    warning("%f Hz sound is inaudible", db)
-    close(fig_proc)
-    return;
-end
-
 idx_V = find(idx_max > min_range & idx_max < max_range);
 %sprintf("Start min value: %f", min_range)
 while isempty(idx_V)
